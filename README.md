@@ -15,6 +15,7 @@ tools; the current-tool button opens its properties when available in a content-
 popover centered above it. Selecting an object on a phone does not open properties
 automatically. During text entry, tool panels close so they cannot cover the text editor.
 A separate hand button beside **+** selects canvas panning using the native tool switch.
+Boards start with the hand tool selected on desktop and mobile, including after reload.
 Quick buttons place text above the hand, eraser above **+**, image above the eraser,
 and pen to the hand's left. Image opens the native file picker and inserts the chosen
 file directly onto the canvas. On screens narrower than 384 pixels the pen moves into the upper row to

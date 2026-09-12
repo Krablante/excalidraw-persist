@@ -186,6 +186,7 @@ const ExcalidrawEditor = ({ boardId, shareId, readOnly }: ExcalidrawEditorProps)
             appState: {
               theme: currentAppTheme,
               viewBackgroundColor: '#f5f2ec',
+              activeTool: { type: 'hand', customType: null, locked: false, lastActiveTool: null },
             },
           }}
           onChange={handleChange}
