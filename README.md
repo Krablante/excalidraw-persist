@@ -16,6 +16,9 @@ popover centered above it. Selecting an object on a phone does not open properti
 automatically. During text entry, tool panels close so they cannot cover the text editor.
 A separate hand button beside **+** selects canvas panning using the native tool switch.
 Boards start with the hand tool selected on desktop and mobile, including after reload.
+Double-click or double-tap existing text with the hand tool to edit it, including
+text inside shapes. Dragging still pans the canvas; double-tapping empty space
+does not create text. Finishing the edit returns to the hand tool.
 Automatic completion and cancellation also return to the hand tool, including shapes,
 arrows, text submission, image insertion and paste. Explicit selection stays available;
 locked tools and continuous freehand drawing retain their native behavior.

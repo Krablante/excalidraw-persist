@@ -1,7 +1,7 @@
 type AstNode = { type: string; start: number; end: number; [key: string]: unknown };
 type Edit = { start: number; end: number; text: string };
 
-// These are native completion/cancellation paths, not explicit tool selection.
+// Adapt native hand/text interactions and completion, not explicit tool selection.
 export function handToolFallback(code: string, ast: unknown): Edit[] {
   const edits: Edit[] = [];
   const seen = new Set<string>();
@@ -16,7 +16,36 @@ export function handToolFallback(code: string, ast: unknown): Edit[] {
       }
       text = text.replace(pattern, replacement);
     };
-    if (name === 'handleTextWysiwyg') {
+    if (name === 'handleCanvasDoubleClick') {
+      const event = (node.params as AstNode[])[0].name;
+      if (typeof event !== 'string') throw new Error('Unknown double-click event binding');
+      const coords = Array.from(text.matchAll(/([\w$]+)\(\s*([\w$]+),\s*this\.state\s*\)/g)).filter(
+        match => match[2] === event
+      );
+      if (coords.length !== 1) throw new Error('Native double-click coordinates changed');
+      const position = (node.body as AstNode).start - node.start + 1;
+      // Hit-test the existing text directly so stale selection cannot redirect
+      // the edit. Keep native WYSIWYG, bindings, history and keyboard focus.
+      text =
+        text.slice(0, position) +
+        `
+        if (this.state.activeTool.type === "hand") {
+          if (this.state.viewModeEnabled || this.state.multiElement || this.state.editingTextElement ||
+              ${event}.ctrlKey || ${event}.metaKey) return;
+          const point = ${coords[0][1]}(${event}, this.state);
+          const element = this.getTextElementAtPosition(point.x, point.y);
+          if (element) {
+            this.setState({
+              editingTextElement: element,
+              activeTool: {...this.state.activeTool, type: "selection", lastActiveTool: null}
+            });
+            this.handleTextWysiwyg(element, {isExistingElement: true});
+          }
+          return;
+        }
+      ` +
+        text.slice(position);
+    } else if (name === 'handleTextWysiwyg') {
       // Keep the native selection tool while typing. Switch only on submission,
       // and do not override a different tool chosen while the textarea blurs.
       replace(
@@ -46,6 +75,7 @@ export function handToolFallback(code: string, ast: unknown): Edit[] {
   };
   const methods = new Set(['onPointerUpFromPointerDownHandler', 'handleTextWysiwyg']);
   const fields = new Set([
+    'handleCanvasDoubleClick',
     'toggleLock',
     'onImageAction',
     'onKeyDown',

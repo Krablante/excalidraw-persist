@@ -61,6 +61,10 @@ bundles. Do not replace every occurrence of `selection`: explicit selection and
 the intermediate selection state used during text entry must remain intact.
 Text submission switches to hand only after editing ends and must not override a
 different tool chosen while the textarea loses focus.
+The native double-click handler also accepts the hand tool for existing text only.
+It uses native scene-coordinate conversion and text hit-testing (including bound
+text), then opens native WYSIWYG on that exact element, ignoring stale selection.
+Empty space, non-text objects and readonly views do not enter text editing.
 
 When upgrading Excalidraw, review every match against the new source and verify
 both development and production builds. Do not weaken the guards just to get a
@@ -85,6 +89,10 @@ actual browser and inspect screenshots and console/network errors.
   Firefox for Android's native multitouch delivery.
 - Draw shapes, arrows and freehand strokes; add/edit text and an image. Check
   the current-tool icon, tool locking, hand tool, eraser and line completion.
+- With the hand tool, double-click and double-tap standalone and bound text;
+  verify focus, editing, save/reload and return to hand after submission. A single
+  tap or drag must not edit text, and double-tapping empty space must not create it.
+  Repeat in Firefox touch input and readonly views; selection-tool editing remains native.
 - Select single/multiple objects. Change color, opacity, font, fill and advanced
   properties; duplicate/delete, group, undo and redo. Close/reopen properties.
   On mobile, selection must not auto-open properties. Create and double-tap-edit
