@@ -39,6 +39,13 @@ entry points; the explicit CommonJS dependency list in `vite.config.ts` is neede
 for development compatibility.
 
 The adapter intentionally fails when its version or structural matches change.
+`handToolFallback.ts` scopes hand-tool fallback changes to native completion,
+cancellation, paste and unlock handlers, checking every replacement count in both
+bundles. Do not replace every occurrence of `selection`: explicit selection and
+the intermediate selection state used during text entry must remain intact.
+Text submission switches to hand only after editing ends and must not override a
+different tool chosen while the textarea loses focus.
+
 When upgrading Excalidraw, review every match against the new source and verify
 both development and production builds. Do not weaken the guards just to get a
 successful build.

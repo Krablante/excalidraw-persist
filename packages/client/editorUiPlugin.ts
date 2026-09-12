@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { normalizePath, type Plugin } from 'vite';
+import { handToolFallback } from './handToolFallback';
 
 // Excalidraw ships bundled JS, not replaceable source components. Match the
 // components' public prop names in the AST, never minified variable names.
@@ -65,7 +66,9 @@ export const editorUiPlugin = (): Plugin => ({
         text: `doskaElement(${component},{native:(${code.slice(start, end)}),${props}})`,
       });
     };
-    for (const statement of this.parse(code).body) {
+    const ast = this.parse(code);
+    chromeEdits.push(...handToolFallback(code, ast));
+    for (const statement of ast.body) {
       if (statement.type !== 'VariableDeclaration') continue;
       for (const declaration of statement.declarations) {
         const fn = declaration.init;
