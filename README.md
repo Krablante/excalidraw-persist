@@ -19,6 +19,9 @@ Boards start with the hand tool selected on desktop and mobile, including after 
 Automatic completion and cancellation also return to the hand tool, including shapes,
 arrows, text submission, image insertion and paste. Explicit selection stays available;
 locked tools and continuous freehand drawing retain their native behavior.
+Pinch zoom keeps the canvas point between your fingers anchored. With the hand
+tool, lifting either finger lets the remaining finger continue panning without
+starting a new gesture. This scales the canvas, not the browser page.
 Quick buttons place text above the hand, eraser above **+**, image above the eraser,
 and pen to the hand's left. Image opens the native file picker and inserts the chosen
 file directly onto the canvas. On screens narrower than 384 pixels the pen moves into the upper row to

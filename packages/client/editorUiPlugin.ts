@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { normalizePath, type Plugin } from 'vite';
 import { handToolFallback } from './handToolFallback';
+import { touchGesturePatch } from './touchGesturePatch';
 
 // Excalidraw ships bundled JS, not replaceable source components. Match the
 // components' public prop names in the AST, never minified variable names.
@@ -68,6 +69,7 @@ export const editorUiPlugin = (): Plugin => ({
     };
     const ast = this.parse(code);
     chromeEdits.push(...handToolFallback(code, ast));
+    chromeEdits.push(...touchGesturePatch(code, ast));
     for (const statement of ast.body) {
       if (statement.type !== 'VariableDeclaration') continue;
       for (const declaration of statement.declarations) {

@@ -39,6 +39,15 @@ entry points; the explicit CommonJS dependency list in `vite.config.ts` is neede
 for development compatibility.
 
 The adapter intentionally fails when its version or structural matches change.
+`touchGesturePatch.ts` keeps the native pointer map, event handlers and zoom limits,
+but computes pinch translation from a scene-space anchor captured when the second
+pointer arrives. Do not accumulate center deltas against React state: the two
+pointer moves can be batched before the camera state is committed, causing drift.
+The gesture also retains pointer positions and a camera snapshot for continuing
+hand/view-mode panning with either remaining finger. A new gesture resets these
+snapshots. Mouse wheel and trackpad handlers are unchanged; no extra DOM listeners
+or persistence fields are introduced.
+
 `handToolFallback.ts` scopes hand-tool fallback changes to native completion,
 cancellation, paste and unlock handlers, checking every replacement count in both
 bundles. Do not replace every occurrence of `selection`: explicit selection and
@@ -58,6 +67,10 @@ actual browser and inspect screenshots and console/network errors.
 
 - Check desktop, narrow laptop, phone portrait and short landscape layouts;
   resize across the breakpoint without reloading or clicking to refresh it.
+- Check symmetric pinch in/out, translating the midpoint, repeated round trips,
+  lifting either finger, one/two/one/two transitions and touch cancellation. The
+  midpoint must stay over the same scene point; round trips must not drift. Repeat
+  at a high device pixel ratio and in a readonly view; browser page scale stays 1.
 - Draw shapes, arrows and freehand strokes; add/edit text and an image. Check
   the current-tool icon, tool locking, hand tool, eraser and line completion.
 - Select single/multiple objects. Change color, opacity, font, fill and advanced
