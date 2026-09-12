@@ -533,15 +533,40 @@ body .excalidraw.doska-command-menu--mobile {
   justify-self: center;
 }
 .doska-navigation-tools {
+  position: relative;
   justify-self: end;
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.excalidraw .doska-hand[aria-pressed='true'] {
+.excalidraw .doska-hand[aria-pressed='true'],
+.excalidraw .doska-quick-tool[aria-pressed='true'] {
   background: var(--color-surface-primary-container);
   color: var(--color-on-primary-container);
   border-color: var(--color-primary);
+}
+.doska-quick-tool {
+  position: absolute;
+}
+.excalidraw .doska-quick-freedraw {
+  right: 112px;
+  bottom: 4px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+}
+.doska-quick-text {
+  right: 60px;
+  bottom: 60px;
+}
+.doska-quick-eraser {
+  right: 2px;
+  bottom: 60px;
+}
+@media (max-width: 383px) {
+  .excalidraw .doska-quick-freedraw {
+    bottom: 62px;
+  }
 }
 .excalidraw .doska-add {
   justify-self: end;
@@ -560,9 +585,9 @@ body .excalidraw.doska-command-menu--mobile {
   left: 0;
   right: 0;
   margin-inline: auto;
-  bottom: 72px;
+  bottom: 132px;
   width: min(248px, calc(100% - 32px));
-  max-height: calc(100% - 88px);
+  max-height: calc(100% - 148px);
   display: flex;
   flex-direction: column;
   z-index: 3;
@@ -598,7 +623,7 @@ body .excalidraw.doska-command-menu--mobile {
 }
 .doska-add-sheet {
   width: min(300px, calc(100% - 32px));
-  max-height: calc(100% - 88px);
+  max-height: calc(100% - 148px);
 }
 .doska-mobile-sheet .doska-panel-heading {
   min-height: 36px;
@@ -748,7 +773,7 @@ body .excalidraw.doska-command-menu--mobile {
 .doska-return {
   position: absolute;
   right: 8px;
-  bottom: 72px;
+  bottom: 132px;
   pointer-events: auto;
   z-index: 4;
 }
@@ -770,7 +795,7 @@ body .excalidraw.doska-command-menu--mobile {
 }
 @media (max-height: 500px) {
   .doska-mobile-sheet {
-    max-height: calc(100% - 90px);
+    max-height: calc(100% - 150px);
   }
 }
 @media (max-width: 730px) {

@@ -224,6 +224,21 @@ export function MobileChrome({
             <UiIcon name={appState.activeTool.type} size={23} />
           </button>
           <div className="doska-navigation-tools">
+            {(['freedraw', 'text', 'eraser'] as const).map(type => (
+              <button
+                key={type}
+                className={`doska-bubble doska-quick-tool doska-quick-${type}`}
+                aria-label={toolNames[type]}
+                title={toolNames[type]}
+                aria-pressed={appState.activeTool.type === type}
+                onClick={() => {
+                  close();
+                  app.setActiveTool({ type });
+                }}
+              >
+                <UiIcon name={type} size={22} />
+              </button>
+            ))}
             <button
               className="doska-bubble doska-hand"
               aria-label="Перемещение холста"

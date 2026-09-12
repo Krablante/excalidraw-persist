@@ -11,6 +11,9 @@ bottom: Undo/Redo, the current tool, and a circular **+**. The plus opens the na
 tools; the current-tool button opens its properties when available. Selecting an
 object opens a content-sized popover centered above the current-tool button.
 A separate hand button beside **+** toggles canvas panning using the native tool switch.
+Quick buttons place text above the hand, eraser above **+**, and pen to the hand's
+left. On screens narrower than 384 pixels the pen moves into the upper row to
+keep the center control clear. Open panels sit above these shortcuts.
 Close the popover to regain canvas space and reopen
 it with the current-tool button. Less-used properties remain under **Ещё параметры**.
 
