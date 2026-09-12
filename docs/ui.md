@@ -48,6 +48,13 @@ hand/view-mode panning with either remaining finger. A new gesture resets these
 snapshots. Mouse wheel and trackpad handlers are unchanged; no extra DOM listeners
 or persistence fields are introduced.
 
+Touch panning must not cancel `pointerdown`: Firefox can drop secondary-pointer
+moves when the primary pointerdown is prevented ([Mozilla bug 1729465](https://bugzilla.mozilla.org/show_bug.cgi?id=1729465)).
+The adapter guards the native hand/view-mode pan handler's `preventDefault()`
+for touch input only. Native canvas `touch-action: none` continues to prevent page
+panning/zooming; mouse and pen cancellation is preserved. Do not replace this with
+a user-agent check or disable zoom globally in the viewport meta tag.
+
 `handToolFallback.ts` scopes hand-tool fallback changes to native completion,
 cancellation, paste and unlock handlers, checking every replacement count in both
 bundles. Do not replace every occurrence of `selection`: explicit selection and
@@ -71,6 +78,11 @@ actual browser and inspect screenshots and console/network errors.
   lifting either finger, one/two/one/two transitions and touch cancellation. The
   midpoint must stay over the same scene point; round trips must not drift. Repeat
   at a high device pixel ratio and in a readonly view; browser page scale stays 1.
+- In Firefox, check both fingers moving simultaneously, not just one finger at a
+  time. In hand and readonly modes, verify touch `pointerdown.defaultPrevented`
+  stays false after bubbling and the canvas has `touch-action: none`. Mouse pan
+  must still cancel pointerdown. Chromium touch emulation alone does not verify
+  Firefox for Android's native multitouch delivery.
 - Draw shapes, arrows and freehand strokes; add/edit text and an image. Check
   the current-tool icon, tool locking, hand tool, eraser and line completion.
 - Select single/multiple objects. Change color, opacity, font, fill and advanced

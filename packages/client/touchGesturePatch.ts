@@ -18,6 +18,7 @@ export function touchGesturePatch(code: string, ast: unknown): Edit[] {
   const edits: Edit[] = [];
   let starts = 0;
   let moves = 0;
+  let touchPanGuards = 0;
   walk(ast, node => {
     if (
       node.type === 'MethodDefinition' &&
@@ -49,6 +50,35 @@ export function touchGesturePatch(code: string, ast: unknown): Edit[] {
     }
     if (node.type !== 'CallExpression' || !Array.isArray(node.arguments)) return;
     const args = node.arguments as AstNode[];
+    if (
+      args[0]?.type === 'ThisExpression' &&
+      args[1]?.value === 'handleCanvasPanUsingWheelOrSpaceDrag'
+    ) {
+      const fn = args[2];
+      const event = (fn.params as AstNode[])[0].name;
+      if (typeof event !== 'string') throw new Error('Unknown native pan event binding');
+      walk(fn.body, call => {
+        if (call.type !== 'CallExpression') return;
+        const callee = call.callee as AstNode;
+        if (
+          callee?.type !== 'MemberExpression' ||
+          (callee.object as AstNode)?.name !== event ||
+          (callee.property as AstNode)?.name !== 'preventDefault'
+        )
+          return;
+        // Firefox drops secondary pointer moves when the primary touch's
+        // pointerdown is cancelled (Mozilla bug 1729465). The canvas already
+        // uses touch-action:none; keep cancellation only for mouse/pen panning.
+        touchPanGuards++;
+        edits.push({
+          start: call.start,
+          end: call.end,
+          text: `(${event}.pointerType !== "touch" && ${code.slice(call.start, call.end)})`,
+        });
+        return true;
+      });
+      return true;
+    }
     if (args[0]?.type !== 'ThisExpression' || args[1]?.value !== 'handleCanvasPointerMove') return;
     moves++;
     const fn = args[2];
@@ -129,6 +159,7 @@ export function touchGesturePatch(code: string, ast: unknown): Edit[] {
     if (branches !== 1) throw new Error('Native pinch branch changed');
     return true;
   });
-  if (starts !== 1 || moves !== 1) throw new Error('Native gesture handler signatures changed');
+  if (starts !== 1 || moves !== 1 || touchPanGuards !== 1)
+    throw new Error('Native gesture handler signatures changed');
   return edits;
 }
