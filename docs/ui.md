@@ -55,6 +55,9 @@ actual browser and inspect screenshots and console/network errors.
   the current-tool icon, tool locking, hand tool, eraser and line completion.
 - Select single/multiple objects. Change color, opacity, font, fill and advanced
   properties; duplicate/delete, group, undo and redo. Close/reopen properties.
+  On mobile, selection must not auto-open properties. Create and double-tap-edit
+  text, including with a properties panel already open: text entry must hide the
+  panels immediately and keep textarea focus. Check a reduced-height viewport too.
 - Check color field, hue, HEX, transparency, swatches and desktop eyedropper.
 - Open extra tools, library, font picker, export, help, about and canvas background.
   Verify popovers remain readable and inside a narrow or short viewport.

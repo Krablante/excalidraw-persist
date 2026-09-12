@@ -114,8 +114,8 @@ export function MobileChrome({
   const mainMenu = children(commands)[0];
   const [adding, setAdding] = useState(false);
   const selection = Object.keys(appState.selectedElementIds).join(',');
-  const previousSelection = useRef(selection);
   const previousTool = useRef(appState.activeTool.type);
+  const editingText = !!appState.editingTextElement;
   const editable = !appState.viewModeEnabled && appState.openDialog?.name !== 'elementLinkSelector';
 
   useEffect(() => {
@@ -125,14 +125,11 @@ export function MobileChrome({
     }
   }, [appState.activeTool.type]);
   useEffect(() => {
-    if (selection !== previousSelection.current) {
-      previousSelection.current = selection;
-      if (selection && editable) {
-        setAdding(false);
-        setAppState({ openMenu: 'shape' });
-      }
+    if (editingText) {
+      setAdding(false);
+      setAppState({ openMenu: null, openPopup: null });
     }
-  }, [selection, editable, setAppState]);
+  }, [editingText, setAppState]);
   useEffect(() => {
     if (appState.openSidebar || appState.openDialog || appState.openMenu === 'canvas')
       setAdding(false);
@@ -165,7 +162,7 @@ export function MobileChrome({
         appState.theme,
         'doska-command-menu doska-command-menu--mobile'
       )}
-      {(adding || appState.openMenu === 'canvas') && (
+      {!editingText && (adding || appState.openMenu === 'canvas') && (
         <button
           className="doska-chrome-dismiss"
           aria-label="Закрыть панель"
@@ -173,7 +170,7 @@ export function MobileChrome({
           tabIndex={-1}
         />
       )}
-      {adding && editable && (
+      {adding && editable && !editingText && (
         <section className="doska-mobile-sheet doska-add-sheet" aria-label="Добавить на доску">
           <header className="doska-panel-heading">
             <h2>Инструменты</h2>
@@ -191,7 +188,7 @@ export function MobileChrome({
           </div>
         </section>
       )}
-      {settings && editable && !adding && (
+      {settings && editable && !adding && !editingText && (
         <section className="doska-mobile-sheet" aria-label="Свойства объекта">
           <header className="doska-panel-heading">
             <h2>Свойства</h2>

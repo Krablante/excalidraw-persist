@@ -11,8 +11,9 @@ menu button has a smaller fullscreen button below and a smaller Share button to
 its left. On desktop, drawing tools occupy a separate top island and selected-object
 properties open in a small inspector on the right. On phones, three separate controls sit at the
 bottom: Undo/Redo, the current tool, and a circular **+**. The plus opens the native
-tools; the current-tool button opens its properties when available. Selecting an
-object opens a content-sized popover centered above the current-tool button.
+tools; the current-tool button opens its properties when available in a content-sized
+popover centered above it. Selecting an object on a phone does not open properties
+automatically. During text entry, tool panels close so they cannot cover the text editor.
 A separate hand button beside **+** selects canvas panning using the native tool switch.
 Quick buttons place text above the hand, eraser above **+**, image above the eraser,
 and pen to the hand's left. Image opens the native file picker and inserts the chosen
