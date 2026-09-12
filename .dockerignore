@@ -42,3 +42,6 @@ docker-compose.yml
 # Local data
 data/
 **/data/ 
+
+# Keep host-local deployment configuration out of build contexts.
+ops/

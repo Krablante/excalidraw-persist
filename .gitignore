@@ -32,3 +32,6 @@ build/
 *.sqlite3
 *.db 
 data/
+
+# Host-local deployment configuration (not part of the public fork).
+/ops/
