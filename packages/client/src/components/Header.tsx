@@ -1,69 +1,146 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Header.scss';
 import ArchivePopup from './ArchivePopup';
 import SharePopup from './SharePopup';
-import Tab from './Tab';
 import { useBoardContext } from '../contexts/BoardProvider';
-import Icon from './Icon';
 import FullscreenButton from './FullscreenButton';
+import UiIcon from './UiIcon';
+import Dialog from './Dialog';
 
-const Header = () => {
-  const [isArchivePopupOpen, setIsArchivePopupOpen] = useState(false);
-  const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
-
-  const { boards, isLoading, activeBoardId, handleCreateBoard } = useBoardContext();
-
-  if (isLoading) {
-    return <div className="tab-bar-loading">Loading boards...</div>;
-  }
-
+export default function Header() {
+  const [boardsOpen, setBoardsOpen] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [renaming, setRenaming] = useState(false);
+  const [name, setName] = useState('');
+  const navigate = useNavigate();
+  const { boards, activeBoardId, handleCreateBoard, handleRenameBoard, handleArchiveBoard } =
+    useBoardContext();
+  const board = boards.find(board => board.id === activeBoardId);
   return (
-    <div className="header">
+    <header className="header">
       <button
-        className="archive-button"
-        onClick={() => setIsArchivePopupOpen(true)}
-        aria-label="Archived boards"
-        title="Archived boards"
+        className="doska-board-trigger"
+        onClick={() => setBoardsOpen(true)}
+        aria-label="Доски"
+        aria-haspopup="dialog"
+        title={board?.name}
       >
-        <Icon name="archive" />
+        <span>{board?.name || 'Доска'}</span>
+        <UiIcon name="chevron" size={16} />
       </button>
-
-      <div className="tab-bar">
-        {boards.map(board => (
-          <Tab key={board.id} board={board} activeBoardId={activeBoardId} />
-        ))}
+      <div id="doska-tools-slot" />
+      <div className="doska-header-actions">
+        <div id="doska-library-slot" />
+        <div id="doska-menu-slot" />
         <button
-          onClick={handleCreateBoard}
-          className="create-board-button"
-          aria-label="Create new board"
+          className="doska-icon-button"
+          onClick={() => setShareOpen(true)}
+          aria-label="Поделиться"
+          title="Поделиться"
         >
-          +
+          <UiIcon name="share" />
         </button>
+        <FullscreenButton />
       </div>
-
-      {activeBoardId && (
-        <button
-          className="share-button"
-          onClick={() => setIsSharePopupOpen(true)}
-          aria-label="Share board"
-          title="Share board"
-        >
-          <Icon name="share" />
-        </button>
+      {boardsOpen && (
+        <Dialog title="Доски" className="doska-board-dialog" onClose={() => setBoardsOpen(false)}>
+          <nav className="doska-board-list" aria-label="Выбор доски">
+            {boards.map(item => (
+              <button
+                key={item.id}
+                className={`doska-board-row ${item.id === activeBoardId ? 'is-active' : ''}`}
+                aria-current={item.id === activeBoardId ? 'page' : undefined}
+                onClick={() => {
+                  navigate(`/board/${item.id}`);
+                  setBoardsOpen(false);
+                }}
+              >
+                <span>{item.name}</span>
+                {item.id === activeBoardId && <UiIcon name="check" size={16} />}
+              </button>
+            ))}
+          </nav>
+          <div className="doska-menu-actions">
+            <button
+              onClick={() => {
+                setBoardsOpen(false);
+                void handleCreateBoard();
+              }}
+            >
+              <UiIcon name="plus" />
+              Новая доска
+            </button>
+            {board && (
+              <button
+                onClick={() => {
+                  setName(board.name);
+                  setRenaming(true);
+                  setBoardsOpen(false);
+                }}
+              >
+                <UiIcon name="freedraw" />
+                Переименовать
+              </button>
+            )}
+            {board && (
+              <button
+                onClick={() => {
+                  setBoardsOpen(false);
+                  void handleArchiveBoard(board.id);
+                }}
+              >
+                <UiIcon name="archive" />В архив
+              </button>
+            )}
+            <button
+              onClick={() => {
+                setBoardsOpen(false);
+                setArchiveOpen(true);
+              }}
+            >
+              <UiIcon name="library" />
+              Открыть архив
+            </button>
+          </div>
+        </Dialog>
       )}
-
-      <FullscreenButton />
-
-      <ArchivePopup isOpen={isArchivePopupOpen} onClose={() => setIsArchivePopupOpen(false)} />
+      {renaming && board && (
+        <Dialog title="Название доски" onClose={() => setRenaming(false)}>
+          <form
+            className="doska-form"
+            onSubmit={event => {
+              event.preventDefault();
+              if (name.trim()) {
+                handleRenameBoard(board.id, name.trim());
+                setRenaming(false);
+              }
+            }}
+          >
+            <label htmlFor="board-name">Название</label>
+            <input
+              id="board-name"
+              value={name}
+              autoFocus
+              onChange={event => setName(event.target.value)}
+              maxLength={200}
+              required
+            />
+            <button className="doska-primary" type="submit" disabled={!name.trim()}>
+              Сохранить
+            </button>
+          </form>
+        </Dialog>
+      )}
+      <ArchivePopup isOpen={archiveOpen} onClose={() => setArchiveOpen(false)} />
       {activeBoardId && (
         <SharePopup
-          isOpen={isSharePopupOpen}
-          onClose={() => setIsSharePopupOpen(false)}
+          isOpen={shareOpen}
+          onClose={() => setShareOpen(false)}
           boardId={activeBoardId}
         />
       )}
-    </div>
+    </header>
   );
-};
-
-export default Header;
+}

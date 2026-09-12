@@ -1,242 +1,76 @@
-# Excalidraw Persist
+# Доска / Doska
 
-A self-hostable app with server-side persistence and multiple boards based on Excalidraw.
+Doska is a self-hosted canvas for notes, drawings and images. This fork of
+[Excalidraw Persist](https://github.com/ozencb/excalidraw-persist) keeps its SQLite
+persistence, multiple boards, archive, shared links and per-board libraries, with
+a compact Russian-language interface built around Excalidraw 0.18.0.
 
-`docker run -p 80:80 -p 4000:4000 ghcr.io/ozencb/excalidraw-persist:latest`
+On desktop, drawing tools sit in the header and selected-object properties open
+in a small inspector on the right. On phones, three separate controls sit at the
+bottom: Undo/Redo, the current tool, and a circular **+**. The plus opens the native
+tools; the current-tool button opens its properties when available. Selecting an
+object opens a compact bottom sheet. Close it to regain canvas space and reopen
+it with the current-tool button. Less-used properties remain under **Ещё параметры**.
 
-<img width="1440" height="790" alt="Screenshot" src="https://github.com/user-attachments/assets/18f0f065-58d1-42d8-94d6-b29531b4b685" />
+The board-name button opens board navigation, creation, renaming and archive.
+The top-right menu contains export, library, theme, canvas background, navigation,
+help and license information. The adjacent Share button creates separate viewing
+and editing links. Light and dark themes use the same layout.
 
+## Run your own instance
 
+Build this fork locally; the upstream container image does not include Doska's UI.
+Docker Compose serves the app and API together through port 4002 and keeps the
+database in a named volume.
 
-## Features
+```sh
+git clone https://github.com/Krablante/excalidraw-persist.git
+cd excalidraw-persist
+docker compose up -d --build
+```
 
-- 💾 Server-side persistence of drawings, images, library objects
-- 📑 Multiple boards/tabs support
-- 🗑️ Trash functionality for deleted boards
-- 🗃️ SQLite database for simple deployment
-- ⛶ Full-screen toggle for boards and shared views in supported browsers
-- Compact color picker with a saturation/brightness field, hue slider and HEX input
-- Compact right-hand mobile dock with stable menu and undo/redo positions
+Open `http://localhost:4002`. For remote use, put the service behind an HTTPS
+reverse proxy and your own access controls. Editing links grant modification
+access to anyone who can reach the instance and has the link. The main board list
+is not a user-account system. This app persists changes to the server; it does not
+provide live collaborative cursors or simultaneous-edit conflict resolution.
 
-## Mobile controls
+The container uses `DB_PATH=/app/data/database.sqlite`. Back up that database with
+SQLite's online backup facility, or stop the service before copying it. Keep the
+volume when recreating the container; `docker compose down -v` deletes its data.
 
-The bottom dock sits at the right edge instead of stretching across the canvas.
-Menu and Undo/Redo stay in fixed positions; selection actions expand to their
-left. The default dock is 140 × 48 CSS pixels, with 44 × 44 button targets.
-Duplicate, Delete, style editing and line completion retain the editor's native
-behavior and conditional visibility. Read-only views show just the menu button.
+## Fullscreen and colors
 
-The menu and style panel open above the dock, aligned to its right edge. They are
-capped at 300 pixels wide and fit smaller screens; long content still scrolls.
-The return-to-content button appears above the dock without squeezing its label.
-Existing viewport/safe-area handling also applies in fullscreen. Wide-screen
-desktop controls retain their native layout.
+The header's expand icon uses the native Fullscreen API. The button is hidden on
+browsers that do not support HTML fullscreen, including some iPhone browsers.
+The header and dialogs remain available in fullscreen. The layout follows the
+dynamic viewport and display safe areas; browser controls such as F11 remain native.
 
-This is a CSS-only adaptation in `packages/client/src/styles/ExcalidrawEditor.scss`:
-no replacement buttons, event handlers or extra editor state. When upgrading
-Excalidraw, check idle/selected/read-only states, line completion, both menus and
-return-to-content, including a narrow portrait and short landscape viewport.
-
-## Full screen
-
-Use the button at the right of the header to enter or exit full screen. On small
-screens it shows only the expand/contract icon; on desktop it also has a label.
-The header, tools and dialogs remain available. You can also exit using the
-browser's own controls (usually Escape on desktop).
-
-The button uses the native Fullscreen API and is hidden when the browser does not
-allow it, including iPhone browsers without HTML fullscreen support. It does not
-simulate fullscreen or override browser shortcuts such as F11. Browser and OS
-restrictions still apply. The layout follows the dynamic viewport height and
-respects display safe areas, including outside fullscreen.
-
-The implementation lives in the client-only `FullscreenButton` component, shared
-by both headers. It requests fullscreen on the document element so body-level
-dialogs remain visible, and follows `fullscreenchange` instead of guessing the
-state. It adds no dependencies, server calls, polling or persistent settings.
-
-## Color picker
-
-Click the current stroke, fill or canvas color to open the compact picker. Drag
-the marker to choose saturation/brightness and use the hue slider for the color
-family. The preview updates while dragging; releasing applies one change to the
-board, so one Undo reverses a drag and saving is not triggered on every movement.
-Arrow keys adjust the field (Shift makes larger steps) and the hue slider.
-
-HEX accepts three or six digits, with an optional `#`. Enter or leaving the input
-applies it; Escape discards unfinished input and closes the picker. Invalid input
-reverts to the current color. The bottom row contains transparency and up to five
-colors from the drawing, supplemented by common colors. The desktop eyedropper
-uses Excalidraw's canvas sampler; it is hidden in mobile mode, where the editor
-does not support it. Color previews follow Excalidraw's dark-mode filter.
-
-The component and styles live in `packages/client/src/components/ColorPicker.tsx`
-and `packages/client/src/styles/ColorPicker.scss`. A build-time Vite adapter in
-`packages/client/colorPickerPlugin.ts` replaces only the bundled editor's internal
-Picker function and routes the canvas background's HEX-only branch through it.
-It identifies the components by their props in the JavaScript AST,
-not minified names, and uses the same code in development and production. The
-editor still owns selection, color application, undo/redo and persistence events.
-No runtime DOM patching, new dependencies or editor fork are needed.
-
-The adapter is deliberately pinned to Excalidraw 0.18.0 and fails if the version
-or component signature changes. On upgrades, review it against the new Picker
-and verify both `pnpm dev` and the production build. Vite excludes the editor from
-dependency prebundling so the adapter can run; its CommonJS dependencies are
-explicitly prebundled in `vite.config.ts` for development compatibility.
-
-
-## TODO
-- [ ] Collaboration support
+Click the active stroke, fill or canvas color to open the compact picker. Drag the
+saturation/brightness field or hue slider; releasing applies one undoable change.
+Arrow keys adjust the field, with Shift for larger steps. HEX accepts three or six
+digits, optionally prefixed with `#`; Enter or blur applies it, and Escape discards
+unfinished input. The bottom row offers transparency and drawing/common colors.
+The native canvas eyedropper is available on desktop.
 
 ## Development
 
-This project uses pnpm workspaces as a monorepo. Make sure to create a `.env` file with necessary values. You can take a look at `packages/server/.env.example` as a starting point.
+Use Node.js 22 or newer and the pnpm version pinned in `package.json`. Configure the
+server environment from `packages/server/.env.example` before starting both packages.
 
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v22 or newer)
-- [pnpm](https://pnpm.io/) (v10 or newer)
-- Git
-
-```bash
-# Clone the repository
-git clone https://github.com/ozencb/excalidraw-persist.git
-cd excalidraw-persist
-
-# Install dependencies
-pnpm install
-
-# Create environment configuration
+```sh
+pnpm install --frozen-lockfile
 cp packages/server/.env.example packages/server/.env
-
-# Start development servers (client and server)
 pnpm dev
-
-# Build for production
 pnpm build
 ```
 
-## Deployment Options
-
-### Option 1: Docker (Recommended)
-
-The easiest way to deploy Excalidraw Persist is using Docker and Docker Compose.
-
-#### Prerequisites
-
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
-
-#### Deployment Steps
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ozencb/excalidraw-persist.git
-   cd excalidraw-persist
-   ```
-2. Start the containers:
-   ```bash
-   docker-compose up -d
-   ```
-3. Access the application at `http://localhost` (or your server's IP/domain)
-
-or run
-
-1. `docker run -p 80:80 -p 4000:4000 ghcr.io/ozencb/excalidraw-persist:latest`
-2. Access the application at `http://localhost` (or your server's IP/domain)
-
-#### Using npm Scripts
-
-There are some convenience scripts included in the root `package.json`:
-
-- `pnpm docker:build` - Build the Docker images
-- `pnpm docker:up` - Start the containers in detached mode
-- `pnpm docker:down` - Stop and remove the containers
-- `pnpm docker:logs` - View the container logs in follow mode
-
-#### Configuration
-
-The Docker setup uses the following default configuration:
-
-- Client accessible on port 80
-- Server API running on port 4001 (mapped to internal port 4000)
-- Data persisted in a local `./data` volume
-
-#### Environment Variables
-
-The server container accepts the following environment variables:
-
-- `PORT` - The port the server will listen on (default: 4000)
-- `NODE_ENV` - The environment mode (default: production)
-- `DB_PATH` - The path to the SQLite database file (default: /app/data/database.sqlite)
-
-You can modify these in the `docker-compose.yml` file:
-
-```yaml
-# Example custom configuration
-server:
-  environment:
-    - PORT=4000
-    - NODE_ENV=production
-    - DB_PATH=/app/data/custom-database.sqlite
-```
-
-### Option 2: Manual Deployment
-
-#### Prerequisites
-
-- Node.js (v22 or newer)
-- pnpm (v10 or newer)
-
-#### Deployment Steps
-
-1. Clone and prepare the application:
-   ```bash
-   git clone https://github.com/ozencb/excalidraw-persist.git
-   cd excalidraw-persist
-   pnpm install
-   cp packages/server/.env.example packages/server/.env
-   # Configure your .env file
-   pnpm build
-   ```
-2. Start the server:
-   ```bash
-   pnpm start
-   ```
-3. For production, consider using a process manager like PM2:
-   ```bash
-   npm install -g pm2
-   pm2 start pnpm --name "excalidraw-persist" -- start
-   pm2 save
-   ```
-4. Set up a reverse proxy with Nginx or Apache for proper SSL termination
-
-### Troubleshooting
-
-If you encounter issues:
-
-1. Check the application logs:
-   - Docker: `docker-compose logs` or `pnpm docker:logs`
-   - Manual: Check the console output where the app is running
-2. Verify network connectivity:
-   - Ensure ports are properly exposed and not blocked by firewalls
-   - Verify the server is accessible from the client
-3. Database issues:
-   - Check that the SQLite database file is being created
-   - Ensure the application has write permissions to the database directory
-
-## Backup
-
-The application stores all data in an SQLite database file. To backup your data:
-
-1. **Docker deployment**: Copy the data from the volume:
-   ```bash
-   cp -r ./data/database.sqlite /your/backup/location/
-   ```
-
-2. **Manual deployment**: Copy the SQLite database file from your configured location
+The UI uses native Excalidraw actions, moved through React portals rather than
+duplicated drawing logic. A version-guarded build adapter performs the integration
+for development and production. See [UI maintenance](docs/ui.md) before changing
+the editor version or layout.
 
 ## License
 
-MIT
+MIT. The original Excalidraw Persist license is preserved in [LICENSE](LICENSE).
+Excalidraw and its bundled assets retain their upstream licenses.

@@ -22,7 +22,7 @@ const SharePage = () => {
         const info = await ShareService.getShareInfo(shareId);
         setShareInfo(info);
       } catch (err) {
-        setError('Share link not found or has been removed.');
+        setError('Ссылка не найдена или была удалена.');
         logger.error('Error fetching share info:', err, true);
       } finally {
         setIsLoading(false);
@@ -35,7 +35,7 @@ const SharePage = () => {
   if (isLoading) {
     return (
       <div className="share-page loading">
-        <Loader message="Loading shared board..." />
+        <Loader message="Загрузка общей доски…" />
       </div>
     );
   }
@@ -44,8 +44,8 @@ const SharePage = () => {
     return (
       <div className="share-page error">
         <div className="error-container">
-          <h2>Unable to load shared board</h2>
-          <p>{error || 'Invalid share link.'}</p>
+          <h2>Не удалось открыть доску</h2>
+          <p>{error || 'Неверная ссылка.'}</p>
         </div>
       </div>
     );
@@ -57,15 +57,14 @@ const SharePage = () => {
     <div className="share-page">
       <div className="share-header">
         <span className="share-board-name">{shareInfo.name}</span>
-        {isReadOnly && <span className="share-badge">Read-only</span>}
+        {isReadOnly && <span className="share-badge">Просмотр</span>}
+        <div id="doska-tools-slot" />
+        <div id="doska-library-slot" />
+        <div id="doska-menu-slot" />
         <FullscreenButton />
       </div>
       <div className="editor-container">
-        <ExcalidrawEditor
-          key={shareId}
-          shareId={shareId}
-          readOnly={isReadOnly}
-        />
+        <ExcalidrawEditor key={shareId} shareId={shareId} readOnly={isReadOnly} />
       </div>
     </div>
   );

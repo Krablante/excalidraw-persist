@@ -1,9 +1,9 @@
 services:
   excalidraw:
-    image: ghcr.io/ozencb/excalidraw-persist:latest
+    build: .
+    image: doska:local
     ports:
       - '4002:80' # Web client - change first number if needed
-      - '4001:4000' # Server API - matches original setup
     volumes:
       - data:/app/data
     environment:

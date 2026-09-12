@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { ShareService, type ShareLink } from '../services/shareService';
-import '../styles/SharePopup.scss';
-import Icon from './Icon';
+import Dialog from './Dialog';
 import logger from '../utils/logger';
 
 interface SharePopupProps {
@@ -12,151 +11,107 @@ interface SharePopupProps {
 
 const SharePopup = ({ isOpen, onClose, boardId }: SharePopupProps) => {
   const [links, setLinks] = useState<ShareLink[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const popupRef = useRef<HTMLDivElement>(null);
-
+  const [error, setError] = useState('');
   useEffect(() => {
-    const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleEscapeKey);
-      fetchLinks();
-    }
-
+    if (!isOpen) return;
+    let active = true;
+    setLoading(true);
+    setError('');
+    setCopiedId(null);
+    ShareService.listShareLinks(boardId)
+      .then(data => {
+        if (active) setLinks(data);
+      })
+      .catch(error => {
+        if (active) setError('Не удалось загрузить ссылки. Закройте окно и попробуйте ещё раз.');
+        logger.error('Error fetching share links:', error);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscapeKey);
+      active = false;
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, boardId]);
 
-  const fetchLinks = async () => {
+  const url = (id: string) => `${window.location.origin}/share/${id}`;
+  const copy = async (id: string) => {
+    setError('');
     try {
-      setIsLoading(true);
-      const data = await ShareService.listShareLinks(boardId);
-      setLinks(data);
-    } catch (error) {
-      logger.error('Error fetching share links:', error, true);
-    } finally {
-      setIsLoading(false);
+      await navigator.clipboard.writeText(url(id));
+      setCopiedId(id);
+    } catch {
+      setError('Не удалось скопировать автоматически. Выделите ссылку и скопируйте её вручную.');
     }
   };
-
-  const handleCreateLink = async (permission: 'edit' | 'readonly') => {
+  const create = async (permission: 'edit' | 'readonly') => {
+    setBusy(true);
+    setError('');
     try {
       const link = await ShareService.createShareLink(boardId, permission);
-      setLinks(prev => {
-        const exists = prev.find(l => l.id === link.id);
-        if (exists) return prev;
-        return [...prev, link];
-      });
-      copyToClipboard(link.id);
+      setLinks(previous =>
+        previous.some(item => item.id === link.id) ? previous : [...previous, link]
+      );
+      await copy(link.id);
     } catch (error) {
-      logger.error('Error creating share link:', error, true);
+      setError('Не удалось создать ссылку. Попробуйте ещё раз.');
+      logger.error('Error creating share link:', error);
+    } finally {
+      setBusy(false);
     }
   };
-
-  const copyToClipboard = (shareId: string) => {
-    const url = `${window.location.origin}/share/${shareId}`;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(url);
-    } else {
-      const textarea = document.createElement("textarea");
-      textarea.value = url;
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-    }
-    setCopiedId(shareId);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const getShareUrl = (shareId: string) => `${window.location.origin}/share/${shareId}`;
-
   if (!isOpen) return null;
-
-  const editLink = links.find(l => l.permission === 'edit');
-  const readonlyLink = links.find(l => l.permission === 'readonly');
-
   return (
-    <div className="share-popup" ref={popupRef}>
-      <div className="share-popup-header">
-        <h2>Share Board</h2>
-        <button className="share-popup-close" onClick={onClose}>
-          <Icon name="close" />
-        </button>
-      </div>
-      <div className="share-popup-content">
-        {isLoading ? (
-          <p className="share-popup-loading">Loading...</p>
-        ) : (
-          <>
-            <div className="share-popup-option">
-              <div className="share-popup-option-info">
-                <h3>Edit access</h3>
-                <p>Anyone with this link can edit</p>
-              </div>
-              {editLink ? (
-                <div className="share-popup-link-row">
-                  <span className="share-popup-url">{getShareUrl(editLink.id)}</span>
+    <Dialog title="Поделиться доской" onClose={onClose}>
+      {loading ? (
+        <p role="status">Загрузка ссылок…</p>
+      ) : (
+        <div className="doska-share-options">
+          {(['readonly', 'edit'] as const).map(permission => {
+            const link = links.find(item => item.permission === permission);
+            return (
+              <section key={permission}>
+                <h3>{permission === 'readonly' ? 'Просмотр' : 'Редактирование'}</h3>
+                <p>
+                  {permission === 'readonly'
+                    ? 'По ссылке можно смотреть доску, но нельзя её изменять.'
+                    : 'Любой, у кого есть ссылка, сможет изменять доску.'}
+                </p>
+                {link ? (
+                  <div className="doska-share-link">
+                    <input
+                      aria-label={`Ссылка: ${permission === 'readonly' ? 'просмотр' : 'редактирование'}`}
+                      readOnly
+                      value={url(link.id)}
+                      onFocus={event => event.target.select()}
+                    />
+                    <button className="doska-secondary" onClick={() => copy(link.id)}>
+                      {copiedId === link.id ? 'Скопировано' : 'Копировать'}
+                    </button>
+                  </div>
+                ) : (
                   <button
-                    className="share-popup-copy-button"
-                    onClick={() => copyToClipboard(editLink.id)}
+                    className="doska-secondary"
+                    disabled={busy}
+                    onClick={() => create(permission)}
                   >
-                    {copiedId === editLink.id ? 'Copied!' : <Icon name="copy" />}
+                    Создать ссылку
                   </button>
-                </div>
-              ) : (
-                <button
-                  className="share-popup-create-button"
-                  onClick={() => handleCreateLink('edit')}
-                >
-                  Create link
-                </button>
-              )}
-            </div>
-
-            <div className="share-popup-option">
-              <div className="share-popup-option-info">
-                <h3>Read-only access</h3>
-                <p>Anyone with this link can view</p>
-              </div>
-              {readonlyLink ? (
-                <div className="share-popup-link-row">
-                  <span className="share-popup-url">{getShareUrl(readonlyLink.id)}</span>
-                  <button
-                    className="share-popup-copy-button"
-                    onClick={() => copyToClipboard(readonlyLink.id)}
-                  >
-                    {copiedId === readonlyLink.id ? 'Copied!' : <Icon name="copy" />}
-                  </button>
-                </div>
-              ) : (
-                <button
-                  className="share-popup-create-button"
-                  onClick={() => handleCreateLink('readonly')}
-                >
-                  Create link
-                </button>
-              )}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
+                )}
+              </section>
+            );
+          })}
+        </div>
+      )}
+      {error && (
+        <p className="doska-error" role="alert">
+          {error}
+        </p>
+      )}
+    </Dialog>
   );
 };
-
 export default SharePopup;

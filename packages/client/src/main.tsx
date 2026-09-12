@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './styles/global.scss';
+import './styles/Workbench.scss';
 import ToastProvider, { useToast } from './contexts/ToastProvider';
 import { initializeLogger } from './utils/logger';
 

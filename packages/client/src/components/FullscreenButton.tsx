@@ -15,7 +15,7 @@ const FullscreenButton = () => {
 
   if (!document.fullscreenEnabled) return null;
 
-  const label = isFullscreen ? 'Exit full screen' : 'Full screen';
+  const label = isFullscreen ? 'Выйти из полного экрана' : 'На весь экран';
 
   const toggleFullscreen = async () => {
     setIsPending(true);

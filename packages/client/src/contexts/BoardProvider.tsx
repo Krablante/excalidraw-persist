@@ -95,7 +95,6 @@ export const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
       if (!boardToDelete) return;
 
       const previousBoards = boards;
-      setBoards(prevBoards => prevBoards.filter(board => board.id !== id));
 
       let nextBoardId: string | undefined = undefined;
       const remainingBoards = previousBoards.filter(b => b.id !== id);
@@ -109,6 +108,9 @@ export const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
 
       try {
         await BoardService.moveToTrash(id);
+        // Remove the board together with navigation, not while the request is pending.
+        // Otherwise the route guard mistakes a normal archive action for an invalid URL.
+        setBoards(prevBoards => prevBoards.filter(board => board.id !== id));
 
         if (activeBoardId === id) {
           if (nextBoardId) {
@@ -139,8 +141,13 @@ export const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
     if (boards.length > 0 || isLoading) {
       didAttemptInitialBoardCreation.current = false;
     }
-    if (activeBoardId && boards.length > 0 && !boards.find(b => b.id === activeBoardId)) {
-      logger.warn('Invalid board id, navigating to last board', true);
+    if (
+      !isLoading &&
+      activeBoardId &&
+      boards.length > 0 &&
+      !boards.find(b => b.id === activeBoardId)
+    ) {
+      logger.warn('Доска недоступна. Открыта другая доска.', true);
       navigate(`/board/${boards[boards.length - 1].id}`);
     }
   }, [boards, isLoading, handleCreateBoard, activeBoardId, navigate]);

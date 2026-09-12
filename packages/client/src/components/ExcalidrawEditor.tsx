@@ -15,6 +15,7 @@ import { useTheme } from '../contexts/ThemeProvider';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
 import logger from '../utils/logger';
 import { LibraryService } from '../services/libraryService';
+import EditorMenu from './EditorMenu';
 
 interface ExcalidrawEditorProps {
   boardId?: string;
@@ -48,6 +49,9 @@ const ExcalidrawEditor = ({ boardId, shareId, readOnly }: ExcalidrawEditorProps)
       appState: AppState,
       updatedFiles: BinaryFiles | null
     ) => {
+      if (appState?.theme && appState.theme !== currentAppTheme) {
+        setAppTheme(appState.theme);
+      }
       if (
         updatedElements.length === 0 &&
         (!updatedFiles || Object.keys(updatedFiles).length === 0)
@@ -56,10 +60,6 @@ const ExcalidrawEditor = ({ boardId, shareId, readOnly }: ExcalidrawEditorProps)
       }
 
       onSceneChange(updatedElements, updatedFiles);
-
-      if (appState?.theme && appState.theme !== currentAppTheme) {
-        setAppTheme(appState.theme);
-      }
     },
     [onSceneChange, currentAppTheme, setAppTheme]
   );
@@ -146,11 +146,17 @@ const ExcalidrawEditor = ({ boardId, shareId, readOnly }: ExcalidrawEditorProps)
     fetchBoardElements();
   }, [fetchBoardElements]);
 
+  // Excalidraw compares children by identity; scene callbacks must not recreate the menu.
+  const editorMenu = useMemo(
+    () => <EditorMenu api={excalidrawAPI} readOnly={readOnly} />,
+    [excalidrawAPI, readOnly]
+  );
+
   if (isLoading) {
     return (
       <div className="excalidraw-editor">
         <div className="excalidraw-container">
-          <Loader message="Loading board elements..." />
+          <Loader message="Загрузка доски…" />
         </div>
       </div>
     );
@@ -162,7 +168,7 @@ const ExcalidrawEditor = ({ boardId, shareId, readOnly }: ExcalidrawEditorProps)
     return (
       <div className="excalidraw-editor">
         <div className="excalidraw-container">
-          <p>Please select or create a board.</p>
+          <p>Выберите или создайте доску.</p>
         </div>
       </div>
     );
@@ -172,12 +178,14 @@ const ExcalidrawEditor = ({ boardId, shareId, readOnly }: ExcalidrawEditorProps)
     <div className="excalidraw-editor">
       <div className="excalidraw-container relative">
         <Excalidraw
+          langCode="ru-RU"
           key={resourceId}
           initialData={{
             elements,
             files,
             appState: {
               theme: currentAppTheme,
+              viewBackgroundColor: '#f5f2ec',
             },
           }}
           onChange={handleChange}
@@ -192,7 +200,9 @@ const ExcalidrawEditor = ({ boardId, shareId, readOnly }: ExcalidrawEditorProps)
               loadScene: false,
             },
           }}
-        />
+        >
+          {editorMenu}
+        </Excalidraw>
       </div>
     </div>
   );

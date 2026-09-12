@@ -10,7 +10,7 @@ const BoardPage = () => {
   if (isLoading) {
     return (
       <div className="board-page loading">
-        <Loader message="Loading board..." />
+        <Loader message="Загрузка доски…" />
       </div>
     );
   }
@@ -19,8 +19,8 @@ const BoardPage = () => {
     return (
       <div className="board-page error">
         <div className="error-container">
-          <h2>Error: Missing Board ID</h2>
-          <p>Please select a board or create a new one.</p>
+          <h2>Не удалось открыть доску</h2>
+          <p>Обновите страницу, чтобы повторить загрузку.</p>
         </div>
       </div>
     );

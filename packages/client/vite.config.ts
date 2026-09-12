@@ -1,11 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import { colorPickerPlugin } from './colorPickerPlugin';
+import { editorUiPlugin } from './editorUiPlugin';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [colorPickerPlugin(), react()],
+  plugins: [editorUiPlugin(), react()],
   optimizeDeps: {
     // Keep the editor visible to the same adapter in dev and production.
     exclude: ['@excalidraw/excalidraw'],

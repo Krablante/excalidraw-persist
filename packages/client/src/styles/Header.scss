@@ -1,96 +1,113 @@
-.header {
-  display: flex;
-  justify-content: flex-start;
-  height: calc(var(--lg-button-size) + 1px);
-  flex-shrink: 0;
-  min-width: 0;
-  background-color: var(--color-surface-low);
-  border-bottom: 1px solid var(--sidebar-border-color);
-
-  .archive-button,
-  .share-button {
-    flex: none;
-    min-width: 44px;
-    justify-content: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: var(--default-icon-size);
-    padding-inline: calc(2.5 * var(--space-factor));
-    color: var(--icon-fill-color);
-    display: flex;
-    align-items: center;
-
-    &:hover {
-      background-color: var(--button-hover-bg);
-      color: var(--color-primary);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--color-primary);
-      outline-offset: -3px;
-    }
-  }
-
-  .tab-bar-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: var(--lg-button-size);
-    background-color: var(--color-surface-low);
-    border-bottom: 1px solid var(--sidebar-border-color);
-    color: var(--color-gray-70);
-    font-size: 0.875rem;
-    padding: 0 calc(4 * var(--space-factor));
-    font-style: italic;
-  }
-}
-
-.tab-bar {
-  display: flex;
-  overflow-x: auto;
-  flex-grow: 1;
-  min-width: 0;
-  white-space: nowrap;
-  scrollbar-width: thin;
-  background-color: var(--color-surface-low);
-
-  .tab {
-    flex-shrink: 0;
-  }
-
-  &::-webkit-scrollbar {
-    height: 5px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thumb);
-    border-radius: 6px;
-
-    &:hover {
-      background-color: var(--scrollbar-thumb-hover);
-    }
-  }
-}
-
-.create-board-button {
-  flex-shrink: 0;
-  background-color: var(--color-surface-low);
-  border: none;
-  padding: 0 calc(4 * var(--space-factor));
-  height: 100%;
-  font-size: 1rem;
-  color: var(--color-gray-70);
+.header,
+.share-header {
+  position: relative;
   display: flex;
   align-items: center;
-  cursor: pointer;
-
+  flex: none;
+  gap: 8px;
+  height: 48px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--dialog-border-color);
+  background: var(--island-bg-color);
+}
+.doska-board-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  max-width: 168px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--dialog-border-color);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  svg {
+    flex: none;
+  }
   &:hover {
-    background-color: var(--button-hover-bg);
-    color: var(--color-primary);
+    background: var(--button-hover-bg);
+  }
+}
+#doska-tools-slot {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+.doska-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+}
+#doska-menu-slot,
+#doska-library-slot {
+  flex: none;
+}
+.header .fullscreen-button,
+.share-header .fullscreen-button {
+  min-width: 36px;
+  width: 36px;
+  padding: 0;
+  height: 36px;
+  border-radius: 8px;
+  align-self: center;
+}
+.fullscreen-label {
+  display: none;
+}
+.share-page .share-header {
+  height: 48px;
+  padding: 0 10px;
+}
+.share-page .share-board-name {
+  max-width: 160px;
+}
+.share-page .share-header .fullscreen-button {
+  margin: 0;
+}
+.share-page .share-badge {
+  background: var(--color-surface-low);
+  color: var(--text-primary-color);
+}
+@media (max-width: 1100px) {
+  #doska-library-slot {
+    display: none;
+  }
+  .doska-board-trigger {
+    max-width: 132px;
+  }
+}
+@media (max-width: 730px) {
+  .header,
+  .share-header {
+    padding-inline: 8px;
+    gap: 4px;
+  }
+  .doska-board-trigger {
+    border: 0;
+    padding-inline: 4px;
+    max-width: 160px;
+    height: 44px;
+  }
+  .header .fullscreen-button,
+  .share-header .fullscreen-button {
+    width: 40px;
+    height: 44px;
+  }
+  .share-page .share-board-name {
+    max-width: 120px;
+  }
+}
+@media (min-width: 731px) and (max-width: 800px) {
+  .doska-board-trigger,
+  .share-page .share-board-name {
+    max-width: 92px;
   }
 }
