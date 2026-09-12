@@ -16,6 +16,26 @@ A self-hostable app with server-side persistence and multiple boards based on Ex
 - 🗃️ SQLite database for simple deployment
 - ⛶ Full-screen toggle for boards and shared views in supported browsers
 - Compact color picker with a saturation/brightness field, hue slider and HEX input
+- Compact right-hand mobile dock with stable menu and undo/redo positions
+
+## Mobile controls
+
+The bottom dock sits at the right edge instead of stretching across the canvas.
+Menu and Undo/Redo stay in fixed positions; selection actions expand to their
+left. The default dock is 140 × 48 CSS pixels, with 44 × 44 button targets.
+Duplicate, Delete, style editing and line completion retain the editor's native
+behavior and conditional visibility. Read-only views show just the menu button.
+
+The menu and style panel open above the dock, aligned to its right edge. They are
+capped at 300 pixels wide and fit smaller screens; long content still scrolls.
+The return-to-content button appears above the dock without squeezing its label.
+Existing viewport/safe-area handling also applies in fullscreen. Wide-screen
+desktop controls retain their native layout.
+
+This is a CSS-only adaptation in `packages/client/src/styles/ExcalidrawEditor.scss`:
+no replacement buttons, event handlers or extra editor state. When upgrading
+Excalidraw, check idle/selected/read-only states, line completion, both menus and
+return-to-content, including a narrow portrait and short landscape viewport.
 
 ## Full screen
 

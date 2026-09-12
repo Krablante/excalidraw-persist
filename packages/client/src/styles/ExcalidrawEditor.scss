@@ -15,3 +15,88 @@
     }
   }
 }
+
+// Keep the native actions and their conditional visibility. Only the mobile
+// layout changes: a right-hand dock that grows left as actions become available.
+.excalidraw-editor .excalidraw.excalidraw--mobile {
+  .App-bottom-bar {
+    justify-content: flex-end;
+
+    > .Island {
+      width: max-content;
+      min-width: 0;
+      max-width: 100%;
+      border-radius: 14px;
+    }
+
+    .App-toolbar {
+      padding: 0;
+    }
+
+    .App-toolbar-content {
+      min-height: 48px;
+      padding: 2px;
+      gap: 2px;
+      justify-content: flex-start;
+      flex-direction: row-reverse;
+      flex-wrap: wrap;
+
+      .main-menu-trigger {
+        order: -2;
+      }
+
+      > div:last-child:not(.dropdown-menu) {
+        // Menu and history stay under the thumb; selection actions grow left.
+        order: -1;
+        display: flex;
+        flex: none;
+        gap: 2px;
+        margin: 0;
+      }
+
+      > button,
+      > div:last-child:not(.dropdown-menu) > button {
+        width: 44px;
+        height: 44px;
+        flex: none;
+        margin: 0;
+        padding: 0;
+        border-radius: 12px;
+
+        .ToolIcon__icon {
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+        }
+      }
+    }
+
+    .App-mobile-menu {
+      width: 300px;
+      max-width: 100%;
+    }
+
+    .scroll-back-to-content {
+      left: auto;
+      right: 0;
+      bottom: calc(100% + 8px);
+      transform: none;
+      width: max-content;
+      max-width: calc(100vw - 28px - env(safe-area-inset-left) - env(safe-area-inset-right));
+      min-height: 44px;
+      margin: 0;
+      padding: 0 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-radius: 12px;
+    }
+
+    .dropdown-menu--mobile {
+      left: auto;
+      right: 0;
+      width: 300px;
+      max-width: calc(100vw - 28px - env(safe-area-inset-left) - env(safe-area-inset-right));
+    }
+  }
+}
