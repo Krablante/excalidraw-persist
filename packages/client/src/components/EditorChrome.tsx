@@ -43,6 +43,7 @@ type ChromeProps = {
   appState: UIAppState;
   app: AppClassProperties;
   actionManager: ActionManager;
+  onHandToolToggle: () => void;
   setAppState: (state: Partial<AppState>) => void;
 };
 
@@ -93,7 +94,14 @@ export function DesktopChrome({ native, appState, setAppState }: ChromeProps) {
   );
 }
 
-export function MobileChrome({ native, appState, actionManager, setAppState, app }: ChromeProps) {
+export function MobileChrome({
+  native,
+  appState,
+  actionManager,
+  setAppState,
+  app,
+  onHandToolToggle,
+}: ChromeProps) {
   const parts = children(native);
   const bottom = parts.find(node => className(node) === 'App-bottom-bar');
   const toolbar = parts.find(node => className(node).includes('App-top-bar'));
@@ -194,7 +202,7 @@ export function MobileChrome({ native, appState, actionManager, setAppState, app
           )}
         </section>
       )}
-      {returnButton && <div className="doska-return">{returnButton}</div>}
+      {returnButton && !adding && !settings && <div className="doska-return">{returnButton}</div>}
       {editable && (
         <footer className="doska-mobile-dock" aria-label="Управление доской">
           <div className="doska-bubble doska-history">
@@ -215,19 +223,33 @@ export function MobileChrome({ native, appState, actionManager, setAppState, app
           >
             <UiIcon name={appState.activeTool.type} size={23} />
           </button>
-          {appState.multiElement ? (
-            <div className="doska-bubble doska-add">{actionManager.renderAction('finalize')}</div>
-          ) : (
+          <div className="doska-navigation-tools">
             <button
-              className="doska-bubble doska-add"
-              aria-label="Добавить"
-              title="Добавить"
-              aria-expanded={adding}
-              onClick={openTools}
+              className="doska-bubble doska-hand"
+              aria-label="Перемещение холста"
+              title="Перемещение холста"
+              aria-pressed={appState.activeTool.type === 'hand'}
+              onClick={() => {
+                close();
+                onHandToolToggle();
+              }}
             >
-              <UiIcon name={adding ? 'close' : 'plus'} size={25} />
+              <UiIcon name="hand" size={22} />
             </button>
-          )}
+            {appState.multiElement ? (
+              <div className="doska-bubble doska-add">{actionManager.renderAction('finalize')}</div>
+            ) : (
+              <button
+                className="doska-bubble doska-add"
+                aria-label="Добавить"
+                title="Добавить"
+                aria-expanded={adding}
+                onClick={openTools}
+              >
+                <UiIcon name={adding ? 'close' : 'plus'} size={25} />
+              </button>
+            )}
+          </div>
         </footer>
       )}
       {!editable && (

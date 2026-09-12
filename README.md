@@ -9,7 +9,9 @@ On desktop, drawing tools sit in the header and selected-object properties open
 in a small inspector on the right. On phones, three separate controls sit at the
 bottom: Undo/Redo, the current tool, and a circular **+**. The plus opens the native
 tools; the current-tool button opens its properties when available. Selecting an
-object opens a compact bottom sheet. Close it to regain canvas space and reopen
+object opens a content-sized popover centered above the current-tool button.
+A separate hand button beside **+** toggles canvas panning using the native tool switch.
+Close the popover to regain canvas space and reopen
 it with the current-tool button. Less-used properties remain under **Ещё параметры**.
 
 The board-name button opens board navigation, creation, renaming and archive.

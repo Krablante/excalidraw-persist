@@ -85,7 +85,10 @@ export const editorUiPlugin = (): Plugin => ({
           }
         }
         const chromeProps = Object.fromEntries(
-          ['appState', 'app', 'actionManager', 'setAppState'].map(key => [key, bindings[key]])
+          ['appState', 'app', 'actionManager', 'setAppState', 'onHandToolToggle'].map(key => [
+            key,
+            bindings[key],
+          ])
         );
         if (fn.body.type === 'BlockStatement') {
           const result = fn.body.body.filter(node => node.type === 'ReturnStatement').pop();
