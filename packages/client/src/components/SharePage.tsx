@@ -60,8 +60,8 @@ const SharePage = () => {
         {isReadOnly && <span className="share-badge">Просмотр</span>}
         <div id="doska-tools-slot" />
         <div id="doska-library-slot" />
-        <div id="doska-menu-slot" />
         <FullscreenButton />
+        <div id="doska-menu-slot" />
       </div>
       <div className="editor-container">
         <ExcalidrawEditor key={shareId} shareId={shareId} readOnly={isReadOnly} />
