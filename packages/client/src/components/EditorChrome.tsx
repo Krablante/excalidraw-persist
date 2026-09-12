@@ -148,6 +148,12 @@ export function MobileChrome({
     setAppState({ openMenu: null, openPopup: null });
     setAdding(!adding);
   };
+  const toggleToolPanel = () => {
+    if (styleAvailable) {
+      setAdding(false);
+      setAppState({ openMenu: settings ? null : 'shape', openPopup: null });
+    } else openTools();
+  };
   const heading = toolNames[appState.activeTool.type] || 'Инструмент';
 
   return (
@@ -214,12 +220,7 @@ export function MobileChrome({
             aria-label={`${heading}: ${styleAvailable ? 'свойства' : 'выбрать инструмент'}`}
             title={heading}
             aria-expanded={!!settings || adding}
-            onClick={() => {
-              if (styleAvailable) {
-                setAdding(false);
-                setAppState({ openMenu: settings ? null : 'shape' });
-              } else openTools();
-            }}
+            onClick={toggleToolPanel}
           >
             <UiIcon name={appState.activeTool.type} size={23} />
           </button>
@@ -231,7 +232,12 @@ export function MobileChrome({
                 aria-label={toolNames[type]}
                 title={toolNames[type]}
                 aria-pressed={appState.activeTool.type === type}
+                aria-expanded={appState.activeTool.type === type && (!!settings || adding)}
                 onClick={() => {
+                  if (appState.activeTool.type === type) {
+                    toggleToolPanel();
+                    return;
+                  }
                   close();
                   app.setActiveTool(
                     type === 'image' ? { type, insertOnCanvasDirectly: true } : { type }
@@ -246,7 +252,12 @@ export function MobileChrome({
               aria-label="Перемещение холста"
               title="Перемещение холста"
               aria-pressed={appState.activeTool.type === 'hand'}
+              aria-expanded={appState.activeTool.type === 'hand' && (!!settings || adding)}
               onClick={() => {
+                if (appState.activeTool.type === 'hand') {
+                  toggleToolPanel();
+                  return;
+                }
                 close();
                 onHandToolToggle();
               }}

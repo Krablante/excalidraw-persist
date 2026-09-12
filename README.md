@@ -13,11 +13,13 @@ properties open in a small inspector on the right. On phones, three separate con
 bottom: Undo/Redo, the current tool, and a circular **+**. The plus opens the native
 tools; the current-tool button opens its properties when available. Selecting an
 object opens a content-sized popover centered above the current-tool button.
-A separate hand button beside **+** toggles canvas panning using the native tool switch.
+A separate hand button beside **+** selects canvas panning using the native tool switch.
 Quick buttons place text above the hand, eraser above **+**, image above the eraser,
 and pen to the hand's left. Image opens the native file picker and inserts the chosen
 file directly onto the canvas. On screens narrower than 384 pixels the pen moves into the upper row to
 keep the center control clear. Open panels sit above these shortcuts.
+Tap an active shortcut again to toggle its properties, or the general tools panel
+for tools without properties (such as hand and eraser), just like the center button.
 Close the popover to regain canvas space and reopen
 it with the current-tool button. Less-used properties remain under **Ещё параметры**.
 
