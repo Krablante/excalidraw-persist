@@ -5,6 +5,7 @@ import ExcalidrawEditor from './ExcalidrawEditor';
 import Loader from './Loader';
 import '../styles/SharePage.scss';
 import logger from '../utils/logger';
+import FullscreenButton from './FullscreenButton';
 
 const SharePage = () => {
   const { shareId } = useParams<{ shareId: string }>();
@@ -57,6 +58,7 @@ const SharePage = () => {
       <div className="share-header">
         <span className="share-board-name">{shareInfo.name}</span>
         {isReadOnly && <span className="share-badge">Read-only</span>}
+        <FullscreenButton />
       </div>
       <div className="editor-container">
         <ExcalidrawEditor

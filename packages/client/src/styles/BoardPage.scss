@@ -1,17 +1,13 @@
 .board-page {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
+  min-height: 0;
 
   .editor-container {
     flex: 1;
+    min-height: 0;
     overflow: hidden;
-  }
-
-  &.loading {
-    // The Loader component itself handles centering and styling
-    // We just need to ensure the board-page container allows it to fill space
-    // height: 100vh; is already set above
   }
 
   &.error {

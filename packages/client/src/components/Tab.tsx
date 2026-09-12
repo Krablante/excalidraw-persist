@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useLayoutEffect, useRef } from 'react';
 import { Board } from '../types/types';
 import { useBoardContext } from '../contexts/BoardProvider';
 import '../styles/Tab.scss';
@@ -11,11 +12,19 @@ interface TabProps {
 
 const Tab = ({ board, activeBoardId }: TabProps) => {
   const { handleRenameBoard, handleArchiveBoard } = useBoardContext();
+  const tabRef = useRef<HTMLAnchorElement>(null);
 
   const isActive = board.id === activeBoardId;
 
+  useLayoutEffect(() => {
+    if (isActive) {
+      tabRef.current?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+  }, [isActive]);
+
   return (
     <Link
+      ref={tabRef}
       key={board.id}
       to={`/board/${board.id}`}
       className={`tab ${isActive ? 'active' : ''}`}

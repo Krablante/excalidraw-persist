@@ -1,0 +1,35 @@
+.fullscreen-button {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: calc(2 * var(--space-factor));
+  min-width: 44px;
+  padding-inline: calc(2.5 * var(--space-factor));
+  align-self: stretch;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  color: var(--icon-fill-color);
+  touch-action: manipulation;
+
+  &[data-active='true'],
+  &:hover {
+    background-color: var(--button-hover-bg);
+    color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -3px;
+  }
+
+  svg {
+    flex: none;
+  }
+
+  @media (max-width: 600px) {
+    .fullscreen-label {
+      display: none;
+    }
+  }
+}

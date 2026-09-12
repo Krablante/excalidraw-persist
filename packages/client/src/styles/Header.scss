@@ -1,12 +1,17 @@
 .header {
   display: flex;
   justify-content: flex-start;
-  height: var(--lg-button-size);
+  height: calc(var(--lg-button-size) + 1px);
+  flex-shrink: 0;
+  min-width: 0;
   background-color: var(--color-surface-low);
   border-bottom: 1px solid var(--sidebar-border-color);
 
   .archive-button,
   .share-button {
+    flex: none;
+    min-width: 44px;
+    justify-content: center;
     background: none;
     border: none;
     cursor: pointer;
@@ -19,6 +24,11 @@
     &:hover {
       background-color: var(--button-hover-bg);
       color: var(--color-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: -3px;
     }
   }
 
@@ -40,9 +50,14 @@
   display: flex;
   overflow-x: auto;
   flex-grow: 1;
+  min-width: 0;
   white-space: nowrap;
   scrollbar-width: thin;
   background-color: var(--color-surface-low);
+
+  .tab {
+    flex-shrink: 0;
+  }
 
   &::-webkit-scrollbar {
     height: 5px;
@@ -63,6 +78,7 @@
 }
 
 .create-board-button {
+  flex-shrink: 0;
   background-color: var(--color-surface-low);
   border: none;
   padding: 0 calc(4 * var(--space-factor));

@@ -14,6 +14,25 @@ A self-hostable app with server-side persistence and multiple boards based on Ex
 - 📑 Multiple boards/tabs support
 - 🗑️ Trash functionality for deleted boards
 - 🗃️ SQLite database for simple deployment
+- ⛶ Full-screen toggle for boards and shared views in supported browsers
+
+## Full screen
+
+Use the button at the right of the header to enter or exit full screen. On small
+screens it shows only the expand/contract icon; on desktop it also has a label.
+The header, tools and dialogs remain available. You can also exit using the
+browser's own controls (usually Escape on desktop).
+
+The button uses the native Fullscreen API and is hidden when the browser does not
+allow it, including iPhone browsers without HTML fullscreen support. It does not
+simulate fullscreen or override browser shortcuts such as F11. Browser and OS
+restrictions still apply. The layout follows the dynamic viewport height and
+respects display safe areas, including outside fullscreen.
+
+The implementation lives in the client-only `FullscreenButton` component, shared
+by both headers. It requests fullscreen on the document element so body-level
+dialogs remain visible, and follows `fullscreenchange` instead of guessing the
+state. It adds no dependencies, server calls, polling or persistent settings.
 
 
 ## TODO

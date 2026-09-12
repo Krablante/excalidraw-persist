@@ -1,25 +1,32 @@
 .share-page {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
+  min-height: 0;
 
   .share-header {
     display: flex;
     align-items: center;
     gap: calc(2 * var(--space-factor));
-    height: var(--lg-button-size);
-    padding: 0 calc(4 * var(--space-factor));
+    height: calc(var(--lg-button-size) + 1px);
+    flex-shrink: 0;
+    padding-inline-start: calc(4 * var(--space-factor));
     background-color: var(--color-surface-low);
     border-bottom: 1px solid var(--sidebar-border-color);
   }
 
   .share-board-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--text-primary-color);
   }
 
   .share-badge {
+    flex-shrink: 0;
     font-size: 0.7rem;
     font-weight: 500;
     padding: calc(0.5 * var(--space-factor)) calc(1.5 * var(--space-factor));
@@ -30,7 +37,12 @@
 
   .editor-container {
     flex: 1;
+    min-height: 0;
     overflow: hidden;
+  }
+
+  .fullscreen-button {
+    margin-inline-start: auto;
   }
 
   &.loading {
