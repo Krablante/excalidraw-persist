@@ -563,6 +563,10 @@ body .excalidraw.doska-command-menu--mobile {
   right: 2px;
   bottom: 60px;
 }
+.doska-quick-image {
+  right: 2px;
+  bottom: 116px;
+}
 @media (max-width: 383px) {
   .excalidraw .doska-quick-freedraw {
     bottom: 62px;
@@ -585,9 +589,9 @@ body .excalidraw.doska-command-menu--mobile {
   left: 0;
   right: 0;
   margin-inline: auto;
-  bottom: 132px;
+  bottom: 188px;
   width: min(248px, calc(100% - 32px));
-  max-height: calc(100% - 148px);
+  max-height: calc(100% - 204px);
   display: flex;
   flex-direction: column;
   z-index: 3;
@@ -623,7 +627,7 @@ body .excalidraw.doska-command-menu--mobile {
 }
 .doska-add-sheet {
   width: min(300px, calc(100% - 32px));
-  max-height: calc(100% - 148px);
+  max-height: calc(100% - 204px);
 }
 .doska-mobile-sheet .doska-panel-heading {
   min-height: 36px;
@@ -773,7 +777,7 @@ body .excalidraw.doska-command-menu--mobile {
 .doska-return {
   position: absolute;
   right: 8px;
-  bottom: 132px;
+  bottom: 188px;
   pointer-events: auto;
   z-index: 4;
 }
@@ -795,7 +799,7 @@ body .excalidraw.doska-command-menu--mobile {
 }
 @media (max-height: 500px) {
   .doska-mobile-sheet {
-    max-height: calc(100% - 150px);
+    max-height: calc(100% - 206px);
   }
 }
 @media (max-width: 730px) {
