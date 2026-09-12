@@ -15,6 +15,7 @@ A self-hostable app with server-side persistence and multiple boards based on Ex
 - 🗑️ Trash functionality for deleted boards
 - 🗃️ SQLite database for simple deployment
 - ⛶ Full-screen toggle for boards and shared views in supported browsers
+- Compact color picker with a saturation/brightness field, hue slider and HEX input
 
 ## Full screen
 
@@ -33,6 +34,36 @@ The implementation lives in the client-only `FullscreenButton` component, shared
 by both headers. It requests fullscreen on the document element so body-level
 dialogs remain visible, and follows `fullscreenchange` instead of guessing the
 state. It adds no dependencies, server calls, polling or persistent settings.
+
+## Color picker
+
+Click the current stroke, fill or canvas color to open the compact picker. Drag
+the marker to choose saturation/brightness and use the hue slider for the color
+family. The preview updates while dragging; releasing applies one change to the
+board, so one Undo reverses a drag and saving is not triggered on every movement.
+Arrow keys adjust the field (Shift makes larger steps) and the hue slider.
+
+HEX accepts three or six digits, with an optional `#`. Enter or leaving the input
+applies it; Escape discards unfinished input and closes the picker. Invalid input
+reverts to the current color. The bottom row contains transparency and up to five
+colors from the drawing, supplemented by common colors. The desktop eyedropper
+uses Excalidraw's canvas sampler; it is hidden in mobile mode, where the editor
+does not support it. Color previews follow Excalidraw's dark-mode filter.
+
+The component and styles live in `packages/client/src/components/ColorPicker.tsx`
+and `packages/client/src/styles/ColorPicker.scss`. A build-time Vite adapter in
+`packages/client/colorPickerPlugin.ts` replaces only the bundled editor's internal
+Picker function and routes the canvas background's HEX-only branch through it.
+It identifies the components by their props in the JavaScript AST,
+not minified names, and uses the same code in development and production. The
+editor still owns selection, color application, undo/redo and persistence events.
+No runtime DOM patching, new dependencies or editor fork are needed.
+
+The adapter is deliberately pinned to Excalidraw 0.18.0 and fails if the version
+or component signature changes. On upgrades, review it against the new Picker
+and verify both `pnpm dev` and the production build. Vite excludes the editor from
+dependency prebundling so the adapter can run; its CommonJS dependencies are
+explicitly prebundled in `vite.config.ts` for development compatibility.
 
 
 ## TODO

@@ -1,0 +1,195 @@
+.excalidraw .color-picker-content.doska-color-picker {
+  width: 100%;
+  max-width: calc(100vw - 64px);
+  gap: 8px;
+
+  .doska-color-field,
+  .doska-color-hue,
+  .doska-color-preview,
+  .doska-color-swatch {
+    // Match the editor's dark-mode color rendering, not the surrounding UI.
+    filter: var(--theme-filter);
+  }
+
+  button,
+  input,
+  [role='slider'] {
+    box-sizing: border-box;
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  .doska-color-field {
+    height: 112px;
+    flex: none;
+    position: relative;
+    border-radius: 8px;
+    background-image:
+      linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent);
+    cursor: crosshair;
+    touch-action: none;
+  }
+
+  .doska-color-cursor {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px #0009;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .doska-color-hue {
+    appearance: none;
+    width: 100%;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    cursor: pointer;
+    touch-action: none;
+    direction: ltr;
+
+    &::-webkit-slider-runnable-track {
+      height: 10px;
+      border-radius: 6px;
+      background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+    }
+
+    &::-moz-range-track {
+      height: 10px;
+      border-radius: 6px;
+      background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+    }
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      margin-top: -3px;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow:
+        0 0 0 1px #0006,
+        0 1px 3px #0003;
+    }
+
+    &::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      background: white;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px #0006;
+    }
+  }
+
+  .doska-color-value {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding-inline-start: 6px;
+    border: 1px solid var(--default-border-color);
+    border-radius: 8px;
+    &:focus-within {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 1px var(--color-primary);
+    }
+  }
+
+  .doska-color-preview,
+  .doska-color-swatch {
+    border: 1px solid #8885;
+    border-radius: 5px;
+    width: 24px;
+    height: 24px;
+    flex: none;
+    &[data-transparent='true'] {
+      background-image: conic-gradient(#8883 25%, transparent 0 50%, #8883 0 75%, transparent 0);
+      background-size: 8px 8px;
+    }
+  }
+
+  .doska-color-hash {
+    opacity: 0.5;
+  }
+
+  .doska-color-hex {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-primary-color);
+    font:
+      13px ui-monospace,
+      monospace;
+    text-transform: uppercase;
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+
+  .doska-color-eyedropper {
+    width: 36px;
+    height: 34px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 6px;
+    color: var(--icon-fill-color);
+    &:hover {
+      background: var(--button-hover-bg);
+    }
+  }
+
+  .doska-color-swatches {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .doska-color-swatch {
+    width: 100%;
+    height: 28px;
+    cursor: pointer;
+    &[aria-pressed='true'] {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .doska-color-hue {
+      height: 32px;
+    }
+    .doska-color-value {
+      height: 44px;
+    }
+    .doska-color-eyedropper {
+      width: 44px;
+      height: 42px;
+    }
+    .doska-color-swatches {
+      gap: 4px;
+    }
+    .doska-color-swatch {
+      height: 36px;
+    }
+  }
+}
+
+// The upstream editor does not render its eyedropper in mobile mode.
+.excalidraw.excalidraw--mobile .doska-color-picker .doska-color-eyedropper {
+  display: none;
+}
