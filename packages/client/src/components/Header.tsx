@@ -33,8 +33,6 @@ export default function Header() {
       <div id="doska-tools-slot" />
       <div className="doska-header-actions">
         <div id="doska-library-slot" />
-        <FullscreenButton />
-        <div id="doska-menu-slot" />
         <button
           className="doska-icon-button"
           onClick={() => setShareOpen(true)}
@@ -43,6 +41,8 @@ export default function Header() {
         >
           <UiIcon name="share" />
         </button>
+        <FullscreenButton />
+        <div id="doska-menu-slot" />
       </div>
       {boardsOpen && (
         <Dialog title="Доски" className="doska-board-dialog" onClose={() => setBoardsOpen(false)}>
