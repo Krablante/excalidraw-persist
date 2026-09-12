@@ -56,12 +56,16 @@ const SharePage = () => {
   return (
     <div className="share-page">
       <div className="share-header">
-        <span className="share-board-name">{shareInfo.name}</span>
-        {isReadOnly && <span className="share-badge">Просмотр</span>}
+        <div className="share-title-island">
+          <span className="share-board-name">{shareInfo.name}</span>
+          {isReadOnly && <span className="share-badge">Просмотр</span>}
+        </div>
         <div id="doska-tools-slot" />
-        <div id="doska-library-slot" />
-        <FullscreenButton />
-        <div id="doska-menu-slot" />
+        <div className="doska-header-actions">
+          <div id="doska-library-slot" />
+          <FullscreenButton />
+          <div id="doska-menu-slot" />
+        </div>
       </div>
       <div className="editor-container">
         <ExcalidrawEditor key={shareId} shareId={shareId} readOnly={isReadOnly} />

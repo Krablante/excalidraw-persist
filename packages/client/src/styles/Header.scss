@@ -1,27 +1,42 @@
-.header,
-.share-header {
+.board-page,
+.share-page {
   position: relative;
-  display: flex;
-  align-items: center;
-  flex: none;
-  gap: 8px;
-  height: 48px;
-  padding: 0 10px;
-  border-bottom: 1px solid var(--dialog-border-color);
-  background: var(--island-bg-color);
 }
-.doska-board-trigger {
+.header,
+.share-page .share-header {
+  position: absolute;
+  inset: 8px 8px auto;
+  z-index: 5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+}
+.header button,
+.header dialog {
+  pointer-events: auto;
+}
+.doska-board-trigger,
+.share-title-island {
   display: flex;
   align-items: center;
   gap: 8px;
   flex: none;
   max-width: 168px;
-  height: 36px;
-  padding: 0 10px;
+  min-height: 44px;
+  padding: 0 12px;
   border: 1px solid var(--dialog-border-color);
-  border-radius: 8px;
+  border-radius: 14px;
+  background: var(--island-bg-color);
+  box-shadow: var(--shadow-island);
   font-size: 13px;
   font-weight: 600;
+}
+.doska-board-trigger {
   span {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -40,74 +55,74 @@
   display: flex;
   justify-content: center;
 }
-.doska-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  flex: none;
-}
-#doska-menu-slot,
 #doska-library-slot {
-  flex: none;
+  display: none;
 }
-.header .fullscreen-button,
-.share-header .fullscreen-button {
-  min-width: 36px;
-  width: 36px;
+.doska-header-actions {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  flex: none;
+  pointer-events: none;
+}
+.doska-header-actions #doska-menu-slot {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.header .doska-header-actions > .doska-icon-button,
+.doska-header-actions .fullscreen-button {
+  position: absolute;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
   padding: 0;
-  height: 36px;
-  border-radius: 8px;
-  align-self: center;
+  margin: 0;
+  border: 1px solid var(--dialog-border-color);
+  border-radius: 50%;
+  background: var(--island-bg-color);
+  box-shadow: var(--shadow-island);
+  pointer-events: auto;
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+  &:hover {
+    background: var(--button-hover-bg);
+  }
+}
+.header .doska-header-actions > .doska-icon-button {
+  left: 0;
+  top: 4px;
+}
+.doska-header-actions .fullscreen-button {
+  right: 4px;
+  top: 60px;
 }
 .fullscreen-label {
   display: none;
 }
-.share-page .share-header {
-  height: 48px;
-  padding: 0 10px;
+.share-title-island {
+  max-width: 220px;
 }
 .share-page .share-board-name {
-  max-width: 160px;
-}
-.share-page .share-header .fullscreen-button {
-  margin: 0;
+  min-width: 0;
 }
 .share-page .share-badge {
   background: var(--color-surface-low);
   color: var(--text-primary-color);
 }
-@media (max-width: 1100px) {
-  #doska-library-slot {
-    display: none;
-  }
-  .doska-board-trigger {
-    max-width: 132px;
+@media (min-width: 731px) and (max-width: 1000px) {
+  .doska-board-trigger,
+  .share-title-island {
+    max-width: 92px;
   }
 }
 @media (max-width: 730px) {
-  .header,
-  .share-header {
-    padding-inline: 8px;
-    gap: 4px;
-  }
   .doska-board-trigger {
-    border: 0;
-    padding-inline: 4px;
     max-width: 160px;
-    height: 44px;
   }
-  .header .fullscreen-button,
-  .share-header .fullscreen-button {
-    width: 40px;
-    height: 44px;
-  }
-  .share-page .share-board-name {
-    max-width: 120px;
-  }
-}
-@media (min-width: 731px) and (max-width: 800px) {
-  .doska-board-trigger,
-  .share-page .share-board-name {
-    max-width: 92px;
+  .share-title-island {
+    max-width: calc(100% - 120px);
   }
 }

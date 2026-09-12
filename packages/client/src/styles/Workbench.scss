@@ -332,8 +332,17 @@ body .excalidraw.doska-native-host {
     height: 18px;
   }
   .main-menu-trigger {
-    border: 0;
-    box-shadow: none;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--dialog-border-color);
+    border-radius: 50%;
+    background: var(--island-bg-color);
+    box-shadow: var(--shadow-island);
+    pointer-events: auto;
+    svg {
+      width: 22px;
+      height: 22px;
+    }
   }
   .App-toolbar__divider {
     margin: 0 4px;
@@ -343,6 +352,7 @@ body .excalidraw.doska-native-host {
     width: auto;
   }
   .dropdown-menu {
+    pointer-events: auto;
     z-index: 100;
     background: var(--island-bg-color);
   }
@@ -352,22 +362,30 @@ body .excalidraw.doska-native-host {
     background: var(--island-bg-color);
   }
 }
+body .excalidraw.doska-desktop-tools {
+  height: 44px;
+  padding: 4px 6px;
+  border: 1px solid var(--dialog-border-color);
+  border-radius: 14px;
+  background: var(--island-bg-color);
+  box-shadow: var(--shadow-island);
+  pointer-events: auto;
+}
+body .excalidraw.doska-command-menu {
+  height: 52px;
+}
 .doska-command-menu .dropdown-menu {
   position: absolute;
-  top: 44px;
+  top: 60px;
   bottom: auto;
   right: 0;
   left: auto;
   width: 280px;
 }
 body .excalidraw.doska-command-menu--mobile {
-  .main-menu-trigger {
-    width: 40px;
-    height: 44px;
-  }
   .dropdown-menu {
     position: fixed;
-    top: calc(env(safe-area-inset-top) + 54px);
+    top: calc(env(safe-area-inset-top) + 68px);
     bottom: auto;
     left: auto;
     right: max(8px, env(safe-area-inset-right));
@@ -379,10 +397,10 @@ body .excalidraw.doska-command-menu--mobile {
 }
 .excalidraw .doska-inspector {
   position: absolute;
-  top: 12px;
+  top: 124px;
   right: 12px;
   width: 252px;
-  max-height: calc(100% - 80px);
+  max-height: calc(100% - 192px);
   background: var(--island-bg-color);
   border: 1px solid var(--default-border-color);
   border-radius: 12px;
@@ -408,7 +426,7 @@ body .excalidraw.doska-command-menu--mobile {
 .excalidraw .doska-reopen {
   position: absolute;
   right: 12px;
-  top: 12px;
+  top: 124px;
   pointer-events: auto;
 }
 .excalidraw .panelColumn.doska-properties {

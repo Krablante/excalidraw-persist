@@ -5,8 +5,11 @@ Doska is a self-hosted canvas for notes, drawings and images. This fork of
 persistence, multiple boards, archive, shared links and per-board libraries, with
 a compact Russian-language interface built around Excalidraw 0.18.0.
 
-On desktop, drawing tools sit in the header and selected-object properties open
-in a small inspector on the right. On phones, three separate controls sit at the
+There is no full-width header bar: the canvas extends behind floating controls.
+The board title is its own island at the top left. At the top right, the larger
+menu button has a smaller fullscreen button below and a smaller Share button to
+its left. On desktop, drawing tools occupy a separate top island and selected-object
+properties open in a small inspector on the right. On phones, three separate controls sit at the
 bottom: Undo/Redo, the current tool, and a circular **+**. The plus opens the native
 tools; the current-tool button opens its properties when available. Selecting an
 object opens a content-sized popover centered above the current-tool button.
