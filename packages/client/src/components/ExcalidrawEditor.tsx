@@ -16,6 +16,7 @@ import { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
 import logger from '../utils/logger';
 import { LibraryService } from '../services/libraryService';
 import EditorMenu from './EditorMenu';
+import { useBoardViewport } from '../hooks/useBoardViewport';
 
 interface ExcalidrawEditorProps {
   boardId?: string;
@@ -26,6 +27,7 @@ interface ExcalidrawEditorProps {
 const ExcalidrawEditor = ({ boardId, shareId, readOnly }: ExcalidrawEditorProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { theme: currentAppTheme, setTheme: setAppTheme } = useTheme();
+  const { initialViewport, rememberViewport } = useBoardViewport(boardId, shareId);
 
   const {
     excalidrawAPI,
@@ -49,6 +51,7 @@ const ExcalidrawEditor = ({ boardId, shareId, readOnly }: ExcalidrawEditorProps)
       appState: AppState,
       updatedFiles: BinaryFiles | null
     ) => {
+      rememberViewport(appState);
       if (appState?.theme && appState.theme !== currentAppTheme) {
         setAppTheme(appState.theme);
       }
@@ -61,7 +64,7 @@ const ExcalidrawEditor = ({ boardId, shareId, readOnly }: ExcalidrawEditorProps)
 
       onSceneChange(updatedElements, updatedFiles);
     },
-    [onSceneChange, currentAppTheme, setAppTheme]
+    [onSceneChange, currentAppTheme, setAppTheme, rememberViewport]
   );
 
   const libraryAdapter = useMemo(() => {
@@ -184,6 +187,7 @@ const ExcalidrawEditor = ({ boardId, shareId, readOnly }: ExcalidrawEditorProps)
             elements,
             files,
             appState: {
+              ...initialViewport,
               theme: currentAppTheme,
               viewBackgroundColor: '#f5f2ec',
               activeTool: { type: 'hand', customType: null, locked: false, lastActiveTool: null },

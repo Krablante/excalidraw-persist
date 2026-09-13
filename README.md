@@ -25,6 +25,10 @@ locked tools and continuous freehand drawing retain their native behavior.
 Pinch zoom keeps the canvas point between your fingers anchored. With the hand
 tool, lifting either finger lets the remaining finger continue panning without
 starting a new gesture. This scales the canvas, not the browser page.
+The last canvas position and zoom are remembered in this browser's localStorage,
+separately for each board and shared link, including readonly links. Reopening or
+reloading returns to that view. They are local preferences, not shared between
+devices; clearing site data clears them. Drawings and images remain on the server.
 Quick buttons place text above the hand, eraser above **+**, image above the eraser,
 and pen to the hand's left. Image opens the native file picker and inserts the chosen
 file directly onto the canvas. On screens narrower than 384 pixels the pen moves into the upper row to

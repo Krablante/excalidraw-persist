@@ -107,6 +107,18 @@ actual browser and inspect screenshots and console/network errors.
   editing links work and changes/images survive a reload.
 - Check both themes, Escape and dialog focus, fullscreen, and request failures.
 
-The persistence hook is separate from the UI adapter. There is no synthetic
+The persistence hook is separate from the UI adapter.
+`useBoardViewport.ts` stores only scrollX, scrollY and zoom in versioned localStorage
+entries scoped by board/share ID. It restores through initialData before the first
+scene render and records initialized onChange callbacks even for empty boards and
+readonly views. Writes are throttled to 200 ms and flushed on hidden/pagehide and
+editor cleanup; unavailable storage or malformed entries must not break the editor.
+It does not store elements, files, selection, tools or editing state. BoardPage and
+SharePage key the editor by resource ID, isolating restoration and pending writes.
+Manually check reload, closing/reopening, switching boards, shared views, immediate
+navigation after a gesture, malformed entries and unavailable storage. Confirm that
+camera-only changes make no scene-save requests and do not enter undo history.
+
+There is no synthetic
 “Saved” indicator: a reliable status would require acknowledged pending-write
 tracking rather than a timer or a label that assumes success.
